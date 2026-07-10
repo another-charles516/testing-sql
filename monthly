@@ -1,0 +1,53 @@
+select
+  clt.name as client_name,
+  max(debt.list_date) as last_placement_date,
+
+  count(distinct debt.debt_id) as accounts_placed,
+  coalesce(sum(
+    coalesce(debt.orig_princ_amt, 0) +
+    coalesce(debt.orig_int_amt, 0)
+  ), 0) as dollar_volume_placed,
+
+  -- Monthly gross revenue (only debts placed in 2026)
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='01' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as jan_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='02' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as feb_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='03' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as mar_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='04' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as apr_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='05' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as may_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='06' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as jun_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='07' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as jul_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='08' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as aug_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='09' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as sep_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='10' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as oct_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='11' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as nov_gross,
+  coalesce(sum(if dateformat(pmt.pmt_date,'mm')='12' then
+    coalesce(pmt.princ_amt,0)+coalesce(pmt.int_amt,0)+coalesce(pmt.fee_amt,0) else 0 endif), 0) as dec_gross,
+
+  -- Annual snapshot totals (only debts placed in 2026)
+  coalesce(sum(
+    coalesce(pmt.princ_amt,0) + coalesce(pmt.int_amt,0) + coalesce(pmt.fee_amt,0)
+  ), 0) as year_gross_revenue,
+  coalesce(sum(coalesce(pmt.amt_earned_clt, 0)), 0) as year_client_net,
+  coalesce(sum(coalesce(pmt.amt_earned_us, 0)), 0) as year_agency_net
+
+from dm.debt as debt
+  inner join dm.clt as clt on clt.clt_id = debt.clt_id
+  left outer join dm.pmt_view as pmt on
+    pmt.debt_id = debt.debt_id and
+    pmt.debt_no = debt.debt_no
+
+where dateformat(debt.list_date, 'yyyy') = '2026'
+
+group by clt.name
+order by clt.name;
