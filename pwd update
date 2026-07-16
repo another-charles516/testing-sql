@@ -1,0 +1,28 @@
+-- =========================================================
+-- Auto-generated extension provisioning INSERTs
+-- Source: triverity.xlsx (Employees Name / Alias / Ext.)
+-- Tables populated: ps_aors, ps_auths, ps_endpoints, voicemail
+-- NOTE: ps_auths.password below uses placeholder '9999'.
+--       Recommend running a scoped random-password UPDATE
+--       afterward (WHERE id IN (...)) rather than blanket.
+-- NOTE: 'Office Toll Free' row's alias cell was a wrapped
+--       note ('Kim and Linda take these calls for Toll
+--       Free'), not a person's alias -- inserted as-is per
+--       instructions; flag if that's not what you want.
+-- =========================================================
+
+-- Randomize ps_auths passwords for the newly added extensions only
+-- (scoped with WHERE id IN (...) so existing peers are untouched)
+
+-- Optional: randomize passwords for ONLY the newly added extensions
+-- (scoped, unlike the blanket UPDATE in the original script)
+UPDATE public.ps_auths
+SET "password" = (
+    SELECT array_to_string(
+        array(
+            SELECT substr('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', (floor(random() * 62) + 1)::int, 1)
+            FROM generate_series(1, 12)
+        ), ''
+    )
+)
+WHERE id IN ('1050','1030','6223','1010','6195','3010','1008','1304','1020','1040','9521','4455','6983','3008','1056','1441','6982','1009','1014','1016','1331','1012','9523','1054','3011','6224','2233','9522','6214','3009','1022','2796','3013','6203','1013','1007','1105','6928','2955','3019','1059','6199','1102','1301','1306','1084','2952','2415','0302','6999','6130','6290','8034','6216','2940','9976','6267','6165','6139','8242','6111','8240','6157','8210','6219','6291','8045','5409','6225','6966','2031','9580','1887','9865','1798');
