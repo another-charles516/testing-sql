@@ -1,0 +1,7 @@
+update commands:
+
+runuser -l postgres -c 'psql -f /tmp/1_ps_aors.sql asterisk'
+runuser -l postgres -c 'psql -f /tmp/2_ps_auths.sql asterisk'
+runuser -l postgres -c 'psql -f /tmp/3_ps_endpoints.sql asterisk'
+runuser -l postgres -c 'psql -f /tmp/4_voicemail.sql asterisk'
+runuser -l postgres -c 'psql -f /tmp/5_update_passwords.sql asterisk'
