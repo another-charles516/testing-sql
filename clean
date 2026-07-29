@@ -1,3 +1,9 @@
+UPDATE public.ast_config
+SET var_val = '/usr/sbin/ssmtp -t -v -f voicemail@triverity.com >> /var/log/asterisk/ssmtp.log 2>&1'
+WHERE filename = 'voicemail.conf' AND category = 'general' AND var_name = 'mailcmd';
+
+
+
 SELECT COUNT(*) FROM (
     SELECT filename,sound_added_datetime,sound_added_by,file_path,file_description,read_only
     FROM public.sound_files
