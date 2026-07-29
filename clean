@@ -1,3 +1,12 @@
+SELECT COUNT(*) FROM (
+    SELECT filename,sound_added_datetime,sound_added_by,file_path,file_description,read_only
+    FROM public.sound_files
+    GROUP BY filename,sound_added_datetime,sound_added_by,file_path,file_description,read_only
+    HAVING COUNT(*) > 1
+) dupes;
+
+
+
 -- =========================================================
 -- Duplicate-row checks across the tables we've been working with
 -- Returns the FULL row for every duplicate found
