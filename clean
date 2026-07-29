@@ -84,3 +84,102 @@ WHERE (rule_type, context_name, recur_dow, recur_time_begin, recur_time_end) IN 
     HAVING COUNT(*) > 1
 )
 ORDER BY rule_type, recur_dow;
+
+
+-- =========================================================
+-- FULL-ROW duplicate checks: compares every column (except each
+-- table's own auto-generated surrogate key, which can never repeat
+-- and would otherwise make every row look "unique")
+-- =========================================================
+
+-- voicemail (excludes uniqueid)
+SELECT *
+FROM public.voicemail v
+WHERE (context,mailbox,password,fullname,alias,email,pager,attach,attachfmt,
+       serveremail,language,tz,deletevoicemail,saycid,sendvoicemail,review,
+       tempgreetwarn,operator,envelope,sayduration,forcename,forcegreetings,
+       callback,dialout,exitcontext,maxmsg,volgain,imapuser,imappassword,
+       imapserver,imapport,imapflags,stamp) IN (
+    SELECT context,mailbox,password,fullname,alias,email,pager,attach,attachfmt,
+           serveremail,language,tz,deletevoicemail,saycid,sendvoicemail,review,
+           tempgreetwarn,operator,envelope,sayduration,forcename,forcegreetings,
+           callback,dialout,exitcontext,maxmsg,volgain,imapuser,imappassword,
+           imapserver,imapport,imapflags,stamp
+    FROM public.voicemail
+    GROUP BY context,mailbox,password,fullname,alias,email,pager,attach,attachfmt,
+             serveremail,language,tz,deletevoicemail,saycid,sendvoicemail,review,
+             tempgreetwarn,operator,envelope,sayduration,forcename,forcegreetings,
+             callback,dialout,exitcontext,maxmsg,volgain,imapuser,imappassword,
+             imapserver,imapport,imapflags,stamp
+    HAVING COUNT(*) > 1
+)
+ORDER BY mailbox;
+
+
+-- ps_aors (id is the real key here, not a surrogate -- included)
+SELECT *
+FROM public.ps_aors a
+WHERE (id,contact,default_expiration,mailboxes,max_contacts,minimum_expiration,
+       remove_existing,qualify_frequency,authenticate_qualify,maximum_expiration,
+       outbound_proxy,support_path,qualify_timeout,voicemail_extension,
+       remove_unavailable,qualify_2xx_only) IN (
+    SELECT id,contact,default_expiration,mailboxes,max_contacts,minimum_expiration,
+           remove_existing,qualify_frequency,authenticate_qualify,maximum_expiration,
+           outbound_proxy,support_path,qualify_timeout,voicemail_extension,
+           remove_unavailable,qualify_2xx_only
+    FROM public.ps_aors
+    GROUP BY id,contact,default_expiration,mailboxes,max_contacts,minimum_expiration,
+             remove_existing,qualify_frequency,authenticate_qualify,maximum_expiration,
+             outbound_proxy,support_path,qualify_timeout,voicemail_extension,
+             remove_unavailable,qualify_2xx_only
+    HAVING COUNT(*) > 1
+)
+ORDER BY id;
+
+
+-- ps_auths (id is the real key here, not a surrogate -- included)
+SELECT *
+FROM public.ps_auths a
+WHERE (id,auth_type,nonce_lifetime,md5_cred,password,realm,username,
+       refresh_token,oauth_clientid,oauth_secret) IN (
+    SELECT id,auth_type,nonce_lifetime,md5_cred,password,realm,username,
+           refresh_token,oauth_clientid,oauth_secret
+    FROM public.ps_auths
+    GROUP BY id,auth_type,nonce_lifetime,md5_cred,password,realm,username,
+             refresh_token,oauth_clientid,oauth_secret
+    HAVING COUNT(*) > 1
+)
+ORDER BY id;
+
+
+-- sound_files (excludes sound_id, the serial surrogate key)
+SELECT *
+FROM public.sound_files s
+WHERE (filename,sound_added_datetime,sound_added_by,file_path,
+       file_description,read_only) IN (
+    SELECT filename,sound_added_datetime,sound_added_by,file_path,
+           file_description,read_only
+    FROM public.sound_files
+    GROUP BY filename,sound_added_datetime,sound_added_by,file_path,
+             file_description,read_only
+    HAVING COUNT(*) > 1
+)
+ORDER BY filename;
+
+
+-- time_rules (excludes rule_id, the primary key)
+SELECT *
+FROM public.time_rules t
+WHERE (rule_type,display_note,context_name,created_by,is_active,is_recurring,
+       recur_dow,recording_to_play,hard_datetime_begin,hard_datetime_end,
+       recur_time_begin,recur_time_end,created) IN (
+    SELECT rule_type,display_note,context_name,created_by,is_active,is_recurring,
+           recur_dow,recording_to_play,hard_datetime_begin,hard_datetime_end,
+           recur_time_begin,recur_time_end,created
+    FROM public.time_rules
+    GROUP BY rule_type,display_note,context_name,created_by,is_active,is_recurring,
+             recur_dow,recording_to_play,hard_datetime_begin,hard_datetime_end,
+             recur_time_begin,recur_time_end,created
+    HAVING COUNT(*) > 1
+)
+ORDER BY rule_type;
