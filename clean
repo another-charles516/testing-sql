@@ -1,0 +1,86 @@
+-- =========================================================
+-- Duplicate-row checks across the tables we've been working with
+-- Returns the FULL row for every duplicate found
+-- =========================================================
+
+-- voicemail: no unique constraint on mailbox, so duplicates
+-- (same mailbox + context) are possible in practice
+SELECT *
+FROM public.voicemail v
+WHERE (mailbox, context) IN (
+    SELECT mailbox, context
+    FROM public.voicemail
+    GROUP BY mailbox, context
+    HAVING COUNT(*) > 1
+)
+ORDER BY mailbox, context;
+
+
+-- ps_aors: id has a UNIQUE constraint, so this should always
+-- return zero rows -- included for completeness / sanity check
+SELECT *
+FROM public.ps_aors a
+WHERE id IN (
+    SELECT id
+    FROM public.ps_aors
+    GROUP BY id
+    HAVING COUNT(*) > 1
+)
+ORDER BY id;
+
+
+-- ps_auths: id has a UNIQUE constraint, so this should always
+-- return zero rows -- included for completeness / sanity check
+SELECT *
+FROM public.ps_auths a
+WHERE id IN (
+    SELECT id
+    FROM public.ps_auths
+    GROUP BY id
+    HAVING COUNT(*) > 1
+)
+ORDER BY id;
+
+
+-- ps_endpoints: id has a UNIQUE constraint, so this should always
+-- return zero rows -- included for completeness / sanity check
+SELECT *
+FROM public.ps_endpoints e
+WHERE id IN (
+    SELECT id
+    FROM public.ps_endpoints
+    GROUP BY id
+    HAVING COUNT(*) > 1
+)
+ORDER BY id;
+
+
+-- sound_files: PRIMARY KEY is sound_id (auto-increment), but
+-- filename itself has NO unique constraint -- duplicate filenames
+-- ARE possible here even though logically each should be unique
+SELECT *
+FROM public.sound_files s
+WHERE filename IN (
+    SELECT filename
+    FROM public.sound_files
+    GROUP BY filename
+    HAVING COUNT(*) > 1
+)
+ORDER BY filename;
+
+
+-- time_rules: PRIMARY KEY is rule_id, so exact rule_id duplicates
+-- can't exist. This instead checks for duplicate SCHEDULE definitions
+-- (same rule_type/context/day-of-week/time window), which would be
+-- functionally redundant rules even with different rule_ids.
+-- Adjust the GROUP BY columns if a different definition of
+-- "duplicate" is what you're after.
+SELECT *
+FROM public.time_rules t
+WHERE (rule_type, context_name, recur_dow, recur_time_begin, recur_time_end) IN (
+    SELECT rule_type, context_name, recur_dow, recur_time_begin, recur_time_end
+    FROM public.time_rules
+    GROUP BY rule_type, context_name, recur_dow, recur_time_begin, recur_time_end
+    HAVING COUNT(*) > 1
+)
+ORDER BY rule_type, recur_dow;
