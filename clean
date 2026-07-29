@@ -1,3 +1,10 @@
+runuser -l postgres -c "psql -d asterisk -c \"INSERT INTO public.ast_config (id, cat_metric, var_metric, filename, category, var_name, var_val, commented) VALUES (61, 1, 0, 'voicemail.conf', 'general', 'mailcmd', '/usr/sbin/ssmtp -t -v -f voicemail@triverity.com >> /var/log/asterisk/ssmtp.log 2>&1', 0);\""
+
+runuser -l postgres -c "psql -d asterisk -c \"UPDATE public.ast_config SET commented = 1 WHERE pkey = 58;\""
+
+
+
+
 UPDATE public.ast_config
 SET var_val = '/usr/sbin/ssmtp -t -v -f voicemail@triverity.com >> /var/log/asterisk/ssmtp.log 2>&1'
 WHERE filename = 'voicemail.conf' AND category = 'general' AND var_name = 'mailcmd';
