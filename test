@@ -1,1 +1,4 @@
 this is a test
+
+
+runuser -l postgres -c "psql -d <your_db_name> -c \"UPDATE public.queues SET context = 'queue-exit-keys' WHERE name = 'UNASSIGNED';\""
