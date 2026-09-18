@@ -1,0 +1,11 @@
+[internal]
+exten => 4448,1,NoOp(Record + prompt-dial)
+ same => n,Answer()
+ same => n,Gosub(sub-record-call,s,1())
+ same => n,Read(EXT,enter-ext-to-dial,4)
+ same => n,GotoIf($["${EXT}" = ""]?hangup)
+ same => n,Dial(PJSIP/${EXT},30)
+ same => n(hangup),Gosub(sub-update-recording,s,1())
+ same => n,Hangup()
+
+exten => h,1,Gosub(sub-update-recording,s,1())
