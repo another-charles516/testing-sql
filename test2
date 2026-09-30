@@ -1,10 +1,13 @@
-this is another test
-cd /var/lib/asterisk/sounds/record
-for f in *.ulaw; do
+#!/bin/bash
+shopt -s nullglob
+cd /var/lib/asterisk/sounds/record || exit 1
+
+for f in [0-9][0-9][0-9][0-9].ulaw; do
   ext="${f%.ulaw}"
   dest="/var/spool/asterisk/voicemail/default/$ext"
   mkdir -p "$dest"
   find "$dest" -maxdepth 1 -name 'unavail.*' ! -name 'unavail.ulaw' -delete
   cp -v "$f" "$dest/unavail.ulaw"
 done
+
 chown -R asterisk:asterisk /var/spool/asterisk/voicemail/default
