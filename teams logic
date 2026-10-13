@@ -1,0 +1,36 @@
+[teams-transfer]
+exten = _XXXX,1,Set(ZULU=${EXTEN})
+  same => n,GotoIf($[${DIALPLAN_EXISTS(zulu-lookup,${ZULU},1)}]?found)
+  same => n,NoOp(No Teams DID for ${ZULU})
+  same => n,hangup()
+  same => n(found),Gosub(zulu-lookup,${ZULU},1)
+  same => n,Set(TEAMSDID=${GOSUB_RETVAL})
+  same => n,Set(trunkid=${IF($["${PJSIP_CONTACT(${PJSIP_AOR(SipService2,contact)},status)}"="Reachable"]?2:1)})
+  same => n,NoOp(ZULU=${ZULU} DID=${TEAMSDID} caller id = ${CALLERID(all)})
+  same => n,Dial(PJSIP/${OUTPREFIX}${TEAMSDID}@${TRUNK}${trunkid},,TtkKwWr(ring))
+  same => n,gosub(errorcheck,1)
+  same => n,hangup()
+
+[zulu-lookup]
+exten = 6130,1,Return(6514086130)   ; AWS Aaron Scott
+exten = 6290,1,Return(6514086920)   ; AJS Amber Schiller
+exten = 8034,1,Return(6514086916)   ; ATF Amy Remitz
+exten = 6216,1,Return(6514086216)   ; DBF Diego Roca
+exten = 2940,1,Return(8558142940)   ; DRF Don Fischer  ** no Teams DID in sheet
+;exten = 9976,1,Return(8779388036)  ; IT Help Desk     ** no Teams DID in sheet
+exten = 6267,1,Return(6514086267)   ; JLW Jennifer Winkelman
+exten = 6165,1,Return(6514086165)   ; JGG Joe Gerdes
+exten = 6139,1,Return(6514086139)   ; JCB John Brelje
+exten = 8242,1,Return(6514086221)   ; JAZ John Zuniga
+exten = 6111,1,Return(6514086111)   ; JUL Julie Ryan
+exten = 8240,1,Return(6514086140)   ; KJC Kindy Gajeski
+exten = 6157,1,Return(6514086157)   ; LIG Laura Gerdes
+exten = 8210,1,Return(6514086904)   ; MJO Marcus O'Brien
+exten = 6219,1,Return(6514086219)   ; MCG Michael Granica
+exten = 6291,1,Return(6514086291)   ; MLA Michelle Atchison
+exten = 8045,1,Return(6514086931)   ; PJT Patti Tibbetts
+;exten = 5409,1,Return(8168765409)  ; PDG Phil DiGiovanni ** no Teams DID in sheet
+exten = 6225,1,Return(6514086225)   ; RRS Rick Senum
+exten = 6966,1,Return(6514086966)   ; RRO Ronda Ormson
+exten = 2031,1,Return(6128232031)   ; SAT Sarah Tessier
+exten = 9580,1,Return(6514086926)   ; SMT Sarah Thielen
