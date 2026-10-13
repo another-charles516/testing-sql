@@ -1,19 +1,17 @@
-[teams-transfer]
+[teams-xfer]
 exten = _XXXX,1,Set(ZULU=${EXTEN})
-  same => n,GotoIf($[${DIALPLAN_EXISTS(zulu-lookup,${ZULU},1)}]?found)
-  same => n,NoOp(No Teams DID for ${ZULU})
-  same => n,hangup()
-  same => n(found),Gosub(zulu-lookup,${ZULU},1)
-  same => n,Set(TEAMSDID=${GOSUB_RETVAL})
+  same => n,Gosub(zulu-lookup,s,1)
+  same => n,GotoIf($["${TEAMSDID}"=""]?nomatch)
   same => n,Set(trunkid=${IF($["${PJSIP_CONTACT(${PJSIP_AOR(SipService2,contact)},status)}"="Reachable"]?2:1)})
   same => n,NoOp(ZULU=${ZULU} DID=${TEAMSDID} caller id = ${CALLERID(all)})
   same => n,Dial(PJSIP/${OUTPREFIX}${TEAMSDID}@${TRUNK}${trunkid},,TtkKwWr(ring))
   same => n,gosub(errorcheck,1)
   same => n,hangup()
+  same => n(nomatch),NoOp(No Teams DID for ${ZULU})
+  same => n,hangup()
 
-[teams-xfer]
-exten = _XXXX,1,Set(ZULU=${EXTEN})
-  same => n,Set(TEAMSDID=)
+[zulu-lookup]
+exten = s,1,Set(TEAMSDID=)
   same => n,ExecIf($[${ZULU}=6130]?Set(TEAMSDID=6514086130))   ; AWS Aaron Scott
   same => n,ExecIf($[${ZULU}=6290]?Set(TEAMSDID=6514086920))   ; AJS Amber Schiller
   same => n,ExecIf($[${ZULU}=8034]?Set(TEAMSDID=6514086916))   ; ATF Amy Remitz
@@ -36,11 +34,4 @@ exten = _XXXX,1,Set(ZULU=${EXTEN})
   same => n,ExecIf($[${ZULU}=6966]?Set(TEAMSDID=6514086966))   ; RRO Ronda Ormson
   same => n,ExecIf($[${ZULU}=2031]?Set(TEAMSDID=6128232031))   ; SAT Sarah Tessier
   same => n,ExecIf($[${ZULU}=9580]?Set(TEAMSDID=6514086926))   ; SMT Sarah Thielen
-  same => n,GotoIf($["${TEAMSDID}"=""]?nomatch)
-  same => n,Set(trunkid=${IF($["${PJSIP_CONTACT(${PJSIP_AOR(SipService2,contact)},status)}"="Reachable"]?2:1)})
-  same => n,NoOp(ZULU=${ZULU} DID=${TEAMSDID} caller id = ${CALLERID(all)})
-  same => n,Dial(PJSIP/${OUTPREFIX}${TEAMSDID}@${TRUNK}${trunkid},,TtkKwWr(ring))
-  same => n,gosub(errorcheck,1)
-  same => n,hangup()
-  same => n(nomatch),NoOp(No Teams DID for ${ZULU})
-  same => n,hangup()
+  same => n,Return()
