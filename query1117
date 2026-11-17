@@ -3,3 +3,11 @@ zgrep -hoE '\[\+?1?(6514086907|8776049572|6512880135|8884371654|6514086133|87741
 
 
 zgrep -hoE 'voicemail/[^/]+/(1059|1654|1102|1301|2415|2952|1084|3019|1105|2955|6199|1017|1306|6999|8218|1013|6928)/tmp/[^ ]+' /var/log/asterisk/full* | sort -u | awk -F/ '{print $3}' | sort | uniq -c | sort -rn
+
+
+
+filename,text
+err-500,"The call cannot be completed due to an error at the other end. Error code five zero zero."
+err-503,"The party you are trying to reach is currently unavailable. Error code five zero three."
+err-603,"The call cannot be completed due to an error at the other end. Error code six zero three."
+err-604,"Your call cannot be completed as dialed. Please check the number and try again. Error code six zero four."
