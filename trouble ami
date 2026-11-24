@@ -1,3 +1,7 @@
+timeout 30 tcpdump -l -nn -i any 'tcp dst port 5039 and src host 10.115.21.24 and tcp[tcpflags] & tcp-push != 0' 2>/dev/null | awk '{print $3}' | sort | uniq -c | sort -rn
+
+Get-NetTCPConnection -RemotePort 5039 -State Established | Select-Object LocalPort, OwningProcess, @{n='Process';e={(Get-Process -Id $_.OwningProcess).ProcessName}}
+
 rm -f /var/log/asterisk/amidebug; asterisk -rx "logger add channel amidebug debug"; asterisk -rx "core set debug 1"; sleep 30; asterisk -rx "core set debug 0"; asterisk -rx "logger remove channel amidebug"; grep -o "DEBUG\[[0-9]*\] manager.c: Running action '[A-Za-z]*'" /var/log/asterisk/amidebug | awk '{print $1, $NF}' | sort -u | awk '{a[$1]=a[$1]" "$2} END{for(t in a) print a[t]}' | sort | uniq -c | sort -rn
 
 
