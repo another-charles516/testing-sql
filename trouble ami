@@ -2,3 +2,6 @@ asterisk -rx "logger add channel amidebug debug"; asterisk -rx "core set debug 1
 
 
 Get-NetTCPConnection -RemotePort 5039 -State Established | Select-Object LocalPort, OwningProcess, @{n='Process';e={(Get-Process -Id $_.OwningProcess).ProcessName}}
+
+
+for a in PJSIPShowEndpoints QueueStatus Status ParkedCalls; do echo -n "$a: "; grep "Running action '$a'" /var/log/asterisk/amidebug | grep -o 'DEBUG\[[0-9]*\]' | sort -u | wc -l; done
