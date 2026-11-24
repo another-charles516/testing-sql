@@ -1,3 +1,9 @@
+timeout 30 tcpdump -l -nn -i any 'tcp dst port 5039 and src host 10.115.21.24' 2>/dev/null | awk '{print $5}' | sort | uniq -c | sort -rn
+
+
+
+
+
 timeout 30 tcpdump -l -nn -i any 'tcp dst port 5039 and src host 10.115.21.24 and tcp[tcpflags] & tcp-push != 0' 2>/dev/null | awk '{print $3}' | sort | uniq -c | sort -rn
 
 Get-NetTCPConnection -RemotePort 5039 -State Established | Select-Object LocalPort, OwningProcess, @{n='Process';e={(Get-Process -Id $_.OwningProcess).ProcessName}}
