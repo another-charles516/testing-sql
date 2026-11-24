@@ -1,1 +1,4 @@
 asterisk -rx "logger add channel amidebug debug"; asterisk -rx "core set debug 1"; sleep 30; asterisk -rx "core set debug 0"; asterisk -rx "logger remove channel amidebug"; grep -o "Manager received command '[A-Za-z]*'" /var/log/asterisk/amidebug | sort | uniq -c | sort -rn
+
+
+Get-NetTCPConnection -RemotePort 5039 -State Established | Select-Object LocalPort, OwningProcess, @{n='Process';e={(Get-Process -Id $_.OwningProcess).ProcessName}}
