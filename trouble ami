@@ -1,3 +1,7 @@
+timeout 30 tcpdump -nn -i any -w /tmp/ami.pcap 'tcp dst port 5039 and src host 10.115.21.24 and tcp[tcpflags] & tcp-push != 0' 2>/dev/null; tcpdump -nn -r /tmp/ami.pcap 2>/dev/null | awk '{for(i=1;i<NF;i++) if($(i+1)==">") print $i}' | sort | uniq -c | sort -rn
+
+
+
 timeout 30 tcpdump -l -nn -i any 'tcp dst port 5039 and src host 10.115.21.24' 2>/dev/null | awk '{print $5}' | sort | uniq -c | sort -rn
 
 
