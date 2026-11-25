@@ -1,3 +1,7 @@
+find /var/spool/asterisk/voicemail -type f \( -perm 666 -o -perm 755 \) -printf '%m %f\n' | awk '{n=split($2,a,"."); print $1, (n>1?a[n]:"(none)")}' | sort | uniq -c | sort -rn
+
+
+
 timeout 30 tcpdump -nn -i any -w /tmp/ami.pcap 'tcp dst port 5039 and src host 10.115.21.24 and tcp[tcpflags] & tcp-push != 0' 2>/dev/null; tcpdump -nn -r /tmp/ami.pcap 2>/dev/null | awk '{for(i=1;i<NF;i++) if($(i+1)==">") print $i}' | sort | uniq -c | sort -rn
 
 
