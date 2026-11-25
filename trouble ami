@@ -1,3 +1,6 @@
+find /var/spool/asterisk/voicemail -type f -perm 666 -name '*.txt' -printf '%TY-%Tm %h\n' | awk -F'[ /]' '{print $1, $NF}' | sort | uniq -c | sort -rn | head -20
+
+
 find /var/spool/asterisk/voicemail -type f \( -perm 666 -o -perm 755 \) -printf '%m %f\n' | awk '{n=split($2,a,"."); print $1, (n>1?a[n]:"(none)")}' | sort | uniq -c | sort -rn
 
 
